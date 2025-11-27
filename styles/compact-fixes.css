@@ -1,0 +1,333 @@
+/* ===================================
+   HERO ILLUSTRATION
+   =================================== */
+
+.hero-illustration {
+    margin: var(--spacing-xl) auto;
+    max-width: 400px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.delivery-image {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 20px 40px rgba(99, 102, 241, 0.3));
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* ===================================
+   ULTRA COMPACT TRACKING CARD
+   =================================== */
+
+.status-overlay {
+    width: 320px !important;
+    max-height: calc(100vh - 90px) !important;
+}
+
+.status-section-compact {
+    padding: var(--spacing-sm) !important;
+}
+
+.status-section-compact .status-header-combined {
+    margin-bottom: 0.5rem !important;
+    gap: 0.5rem !important;
+}
+
+.status-section-compact .status-icon-svg {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0.5rem !important;
+}
+
+.status-section-compact .status-title-combined {
+    font-size: 1rem !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.status-section-compact .tracking-code-badge {
+    font-size: 0.7rem !important;
+    padding: 0.15rem 0.4rem !important;
+}
+
+.status-section-compact .progress-section {
+    margin-bottom: 0.5rem !important;
+}
+
+.status-section-compact .progress-bar {
+    height: 8px !important;
+}
+
+.status-section-compact .eta-section {
+    padding: 0.5rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.status-section-compact .eta-label {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.status-section-compact .eta-time {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+}
+
+/* Ultra compact package details */
+.package-details-compact {
+    padding: 0.5rem !important;
+}
+
+.package-details-compact .package-detail-row {
+    padding: 0.35rem !important;
+    margin-bottom: 0.25rem !important;
+    gap: 0.5rem !important;
+}
+
+.package-details-compact .package-detail-icon {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.package-details-compact .package-detail-label {
+    font-size: 0.65rem !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.package-details-compact .package-detail-value {
+    font-size: 0.8rem !important;
+}
+
+/* Ultra compact timeline */
+.timeline-in-overlay {
+    padding: 0.5rem !important;
+}
+
+.timeline-in-overlay .card-title {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.timeline-in-overlay .timeline-minimalist {
+    max-height: 180px !important;
+}
+
+.timeline-in-overlay .timeline-item-minimal {
+    margin-bottom: 0.5rem !important;
+    gap: 0.5rem !important;
+}
+
+.timeline-in-overlay .timeline-icon-wrapper {
+    width: 28px !important;
+    height: 28px !important;
+}
+
+.timeline-in-overlay .timeline-icon-wrapper svg {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.timeline-in-overlay .timeline-time-minimal {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.timeline-in-overlay .timeline-title-minimal {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.timeline-in-overlay .timeline-location-minimal {
+    font-size: 0.7rem !important;
+}
+
+/* ===================================
+   VISUAL MAP UI
+   =================================== */
+
+.visual-map {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    position: relative;
+    overflow: hidden;
+    display: block !important;
+    min-height: 100%;
+}
+
+.map-container, .map {
+    height: 100% !important;
+    width: 100% !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Map grid pattern */
+.map-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.5;
+}
+
+/* Route path */
+.route-path {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    background: linear-gradient(90deg, #3B82F6 0%, #8B5CF6 50%, #10B981 100%);
+    transform: translateY(-50%);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Location markers */
+.map-marker {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: markerPulse 2s ease-in-out infinite;
+}
+
+.map-marker.origin {
+    top: 45%;
+    left: 12%;
+}
+
+.map-marker.current {
+    top: 42%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: deliveryBounce 3s ease-in-out infinite;
+}
+
+.map-marker.destination {
+    top: 45%;
+    right: 12%;
+}
+
+.marker-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 0.5rem;
+}
+
+.map-marker.origin .marker-icon {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.map-marker.current .marker-icon {
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    position: relative;
+}
+
+.map-marker.current .marker-icon::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid #8B5CF6;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.map-marker.destination .marker-icon {
+    background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.marker-label {
+    background: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+/* Decorative elements */
+.map-decoration {
+    position: absolute;
+    opacity: 0.3;
+}
+
+.map-decoration.cloud-1 {
+    top: 15%;
+    left: 20%;
+    font-size: 3rem;
+    animation: float 8s ease-in-out infinite;
+}
+
+.map-decoration.cloud-2 {
+    top: 25%;
+    right: 25%;
+    font-size: 2.5rem;
+    animation: float 10s ease-in-out infinite 2s;
+}
+
+.map-decoration.building-1 {
+    bottom: 10%;
+    left: 15%;
+    font-size: 2rem;
+}
+
+.map-decoration.building-2 {
+    bottom: 10%;
+    right: 18%;
+    font-size: 2.5rem;
+}
+
+@keyframes markerPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes deliveryBounce {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}

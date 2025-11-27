@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courier Tracking - Track Your Package in Real-Time</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/map-and-components.css">
+    <link rel="stylesheet" href="styles/enhancements.css">
+    <link rel="stylesheet" href="styles/compact-fixes.css">
+    <link rel="stylesheet" href="styles/polish.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <!-- Mesh Background -->
+        <div class="mesh-background"></div>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-content">
+                    <div class="logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 2L3 9L16 16L29 9L16 2Z" fill="url(#logo-gradient)" stroke="#6366F1" stroke-width="2"/>
+                            <path d="M3 23L16 30L29 23" stroke="#6366F1" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M3 16L16 23L29 16" stroke="#6366F1" stroke-width="2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="3" y1="2" x2="29" y2="16">
+                                    <stop stop-color="#6366F1"/>
+                                    <stop offset="1" stop-color="#8B5CF6"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span>CourierTrack</span>
+                    </div>
+                    <div class="nav-links">
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        <span>Real-time Package Tracking</span>
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        Track Your Packages
+                        <span class="hero-title-gradient">Anywhere, Anytime</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Enter your tracking code and watch your package journey unfold with live updates, interactive maps, and detailed timeline tracking
+                    </p>
+
+                    <!-- Delivery Illustration -->
+                    <div class="hero-illustration">
+                        <img src="file:///C:/Users/victo/.gemini/antigravity/brain/fed9b885-5497-4a23-86fd-d05566262fb6/delivery_hero_illustration_1764145356930.png" alt="Delivery Tracking" class="delivery-image">
+                    </div>
+
+                    <!-- Tracking Input -->
+                    <div class="tracking-input-container">
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16z" stroke-width="2"/>
+                                <path d="M19 19l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="trackingCode" 
+                                class="tracking-input" 
+                                placeholder="Enter tracking code (e.g., TRACK001)"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <button class="track-button" id="trackButton">
+                            <span>Track Package</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M7 10L17 10M17 10L13 6M17 10L13 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="error-message" id="errorMessage"></div>
+                    </div>
+
+                    <!-- Example Codes -->
+                    <div class="example-codes">
+                        <span class="example-label">Try example:</span>
+                        <button class="example-code" data-code="TRACK001">TRACK001</button>
+                        <button class="example-code" data-code="TRACK002">TRACK002</button>
+                        <button class="example-code" data-code="TRACK003">TRACK003</button>
+                    </div>
+                </div>
+
+                <!-- Floating Cards Animation -->
+                <div class="floating-cards">
+                    <div class="float-card modern-card" style="--delay: 0s">
+                        <div class="card-icon">📦</div>
+                        <div class="card-text">Real-time Tracking</div>
+                    </div>
+                    <div class="float-card modern-card" style="--delay: 0.5s">
+                        <div class="card-icon">🗺️</div>
+                        <div class="card-text">Interactive Maps</div>
+                    </div>
+                    <div class="float-card modern-card" style="--delay: 1s">
+                        <div class="card-icon">⚡</div>
+                        <div class="card-text">Instant Updates</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose CourierTrack?</h2>
+                <div class="features-bento">
+                    <div class="bento-card modern-card">
+                        <div>
+                            <div class="bento-icon">🌍</div>
+                            <h3>Live Location Tracking</h3>
+                            <p>Watch your package move in real-time on our interactive map. Get precise location updates and estimated arrival times with our advanced tracking technology.</p>
+                        </div>
+                    </div>
+                    <div class="bento-card modern-card">
+                        <div>
+                            <div class="bento-icon">📍</div>
+                            <h3>Detailed Timeline</h3>
+                            <p>Track every checkpoint from pickup to delivery with timestamps and locations</p>
+                        </div>
+                    </div>
+                    <div class="bento-card modern-card">
+                        <div>
+                            <div class="bento-icon">⏰</div>
+                            <h3>ETA Predictions</h3>
+                            <p>Accurate delivery time estimates</p>
+                        </div>
+                    </div>
+                    <div class="bento-card modern-card">
+                        <div>
+                            <div class="bento-icon">🔔</div>
+                            <h3>Instant Updates</h3>
+                            <p>Real-time status notifications</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title">Ready to Track Your Package?</h2>
+                    <p class="cta-subtitle">Join thousands of satisfied customers who trust CourierTrack for real-time package tracking with interactive maps and detailed timelines.</p>
+                    <a href="#" class="cta-button" onclick="document.getElementById('trackingCode').focus(); return false;">
+                        <span>Start Tracking Now</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                            <path d="M7 10L17 10M17 10L13 6M17 10L13 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <div class="container">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <div class="testimonial-slider-container">
+                    <div class="testimonial-slider">
+                        <div class="testimonial-slide active">
+                            <div class="testimonial-rating-large">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="testimonial-quote-large">CourierTrack has completely transformed how I monitor my shipments. The real-time map feature is incredible and gives me peace of mind knowing exactly where my packages are.</p>
+                            <div class="testimonial-author-large">
+                                <div class="author-avatar-large">SM</div>
+                                <div class="author-info-large">
+                                    <div class="author-name-large">Sarah Mitchell</div>
+                                    <div class="author-role-large">E-commerce Business Owner</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <div class="testimonial-rating-large">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="testimonial-quote-large">The interface is so clean and modern. I love how easy it is to track multiple packages and see their exact locations. Best tracking platform I've used!</p>
+                            <div class="testimonial-author-large">
+                                <div class="author-avatar-large">JC</div>
+                                <div class="author-info-large">
+                                    <div class="author-name-large">James Chen</div>
+                                    <div class="author-role-large">Logistics Manager</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <div class="testimonial-rating-large">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <p class="testimonial-quote-large">Finally, a tracking service that actually shows me useful information! The timeline feature with all the checkpoints is exactly what I needed.</p>
+                            <div class="testimonial-author-large">
+                                <div class="author-avatar-large">EP</div>
+                                <div class="author-info-large">
+                                    <div class="author-name-large">Emily Parker</div>
+                                    <div class="author-role-large">Online Shopper</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-dots">
+                        <span class="slider-dot active" data-slide="0"></span>
+                        <span class="slider-dot" data-slide="1"></span>
+                        <span class="slider-dot" data-slide="2"></span>
+                    </div>
+                    <div class="slider-controls">
+                        <button class="slider-btn" id="prevBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M13 16L7 10L13 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="slider-btn" id="nextBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M7 4L13 10L7 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>CourierTrack</h3>
+                        <p>The modern way to track your packages with real-time updates and interactive maps.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#how-it-works">How It Works</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Track Package</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Connect</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">Facebook</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                            <li><a href="#">Instagram</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 CourierTrack. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Locating your package...</p>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/slider.js"></script>
+</body>
+</html>
