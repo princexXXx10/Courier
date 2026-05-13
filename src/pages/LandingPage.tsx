@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTrackingData } from '../data/mockData';
+import { deliveryService } from '../services/deliveryService';
 
 const LandingPage: React.FC = () => {
   const [trackingCode, setTrackingCode] = useState('');
@@ -19,12 +19,11 @@ const LandingPage: React.FC = () => {
     setIsLoading(true);
     setError('');
 
-    // Simulate network delay for UX
-    setTimeout(() => {
+    (async () => {
       const codeToTrack = trackingCode.toUpperCase();
-      const exists = getTrackingData(codeToTrack);
+      const delivery = await deliveryService.getDeliveryByCode(codeToTrack);
       
-      if (!exists) {
+      if (!delivery) {
         setError('Tracking code not found in system.');
         setIsLoading(false);
         return;
@@ -32,7 +31,7 @@ const LandingPage: React.FC = () => {
       
       sessionStorage.setItem('currentTrackingCode', codeToTrack);
       navigate('/tracking');
-    }, 1500);
+    })();
   };
 
   const handleExampleClick = (code: string) => {
@@ -105,7 +104,7 @@ const LandingPage: React.FC = () => {
                     value={trackingCode}
                     onChange={(e) => setTrackingCode(e.target.value)}
                   />
-                  <button type="submit" className="track-button">
+                  <button type="submit" className="track-button dynamic-hover">
                     <span>Track Package</span>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
                       <path d="M7 10L17 10M17 10L13 6M17 10L13 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -118,9 +117,9 @@ const LandingPage: React.FC = () => {
               {/* Example Codes */}
               <div className="example-codes">
                 <span className="example-label">Try example:</span>
-                <button className="example-code" onClick={() => handleExampleClick('TRACK001')}>TRACK001</button>
-                <button className="example-code" onClick={() => handleExampleClick('TRACK002')}>TRACK002</button>
-                <button className="example-code" onClick={() => handleExampleClick('TRACK003')}>TRACK003</button>
+                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK001')}>TRACK001</button>
+                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK002')}>TRACK002</button>
+                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK003')}>TRACK003</button>
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllDeliveries, subscribeToUpdates, TrackingData } from '../data/mockData';
+import { deliveryService, TrackingData } from '../services/deliveryService';
 import LiveMap from '../components/LiveMap';
 
 const AdminDashboard: React.FC = () => {
@@ -8,13 +8,21 @@ const AdminDashboard: React.FC = () => {
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = () => {
-      setDeliveries(getAllDeliveries());
+    const loadData = async () => {
+      const data = await deliveryService.getAllDeliveries();
+      setDeliveries(data);
     };
     
     loadData();
-    const unsubscribe = subscribeToUpdates(loadData);
-    return () => unsubscribe();
+    
+    // Subscribe to all delivery changes
+    const subscription = deliveryService.subscribeToAllDeliveries(() => {
+      loadData();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const totalDeliveries = deliveries.length;
@@ -92,6 +100,7 @@ const AdminDashboard: React.FC = () => {
                 <tr 
                   key={delivery.trackingCode} 
                   onClick={() => setSelectedCode(delivery.trackingCode)}
+                  className="dynamic-hover"
                   style={{ borderBottom: '1px solid var(--border-color)', cursor: 'pointer', background: selectedCode === delivery.trackingCode ? 'var(--bg-tertiary)' : 'transparent' }}
                 >
                   <td style={{ padding: '1rem 0.5rem', fontWeight: '600' }}>{delivery.trackingCode}</td>

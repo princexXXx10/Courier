@@ -106,34 +106,6 @@ body {
     opacity: 0.5;
 }
 
-.spline-3d-container {
-    position: absolute;
-    pointer-events: none;
-    opacity: 0.6;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.spline-3d-container iframe {
-    pointer-events: none;
-}
-
-.spline-3d-container.shape-1 {
-    top: 5%;
-    right: 5%;
-    width: 500px;
-    height: 500px;
-    animation: float3d 20s ease-in-out infinite;
-}
-
-.spline-3d-container.shape-2 {
-    bottom: 10%;
-    left: 5%;
-    width: 450px;
-    height: 450px;
-    animation: float3d 25s ease-in-out infinite reverse;
-}
-
 @keyframes float3d {
     0%, 100% {
         transform: translateY(0) translateX(0);
@@ -328,11 +300,6 @@ body {
     margin-top: var(--spacing-xl);
 }
 
-.tracking-form {
-    max-width: 700px;
-    margin: 0 auto var(--spacing-md);
-}
-
 .input-wrapper {
     display: flex;
     align-items: center;
@@ -457,97 +424,9 @@ body {
     padding: var(--spacing-2xl) 0;
 }
 
-.section-title {
-    text-align: center;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: var(--spacing-xl);
-    color: var(--text-primary);
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-xl);
-}
-
-.feature-card {
-    padding: var(--spacing-xl);
-    text-align: left;
-    position: relative;
-    overflow: hidden;
-}
-
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 0;
-    background: var(--gradient-primary);
-    transition: height 0.3s ease;
-}
-
-.feature-card:hover::before {
-    height: 100%;
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-md);
-    display: inline-block;
-    transition: transform 0.3s ease;
-}
-
-.feature-card:hover .feature-icon {
-    transform: scale(1.1) rotate(5deg);
-}
-
-.feature-card h3 {
-    font-size: 1.3rem;
-    margin-bottom: var(--spacing-sm);
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.feature-card p {
-    color: var(--text-secondary);
-    line-height: 1.7;
-}
-
 /* ===================================
    FLOATING ELEMENTS - REDESIGNED
    =================================== */
-.floating-cards {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-2xl);
-    flex-wrap: wrap;
-}
-
-.float-card {
-    padding: var(--spacing-md) var(--spacing-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    animation: floatCard 3s ease-in-out infinite;
-    animation-delay: var(--delay);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-    backdrop-filter: blur(10px);
-}
-
-.card-icon {
-    font-size: 2rem;
-}
-
-.card-text {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-}
 
 @keyframes floatCard {
     0%, 100% {
@@ -651,13 +530,1062 @@ body {
         min-height: 80vh;
         padding: var(--spacing-xl) 0;
     }
+}
+/* ===================================
+   TESTIMONIAL SLIDER
+   =================================== */
+
+/* ===================================
+   BENTO GRID FEATURES
+   =================================== */
+
+/* Bento Grid Layout */
+
+/* ===================================
+   FLOATING STATUS OVERLAY ON MAP (WITH TIMELINE)
+   =================================== */
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Custom scrollbar for overlay */
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Compact status section */
+.status-section-compact {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.status-section-compact .status-header-combined {
+    margin-bottom: var(--spacing-sm);
+}
+
+.status-section-compact .status-icon-svg {
+    width: 50px;
+    height: 50px;
+    padding: var(--spacing-sm);
+}
+
+.status-section-compact .status-title-combined {
+    font-size: 1.2rem;
+}
+
+.status-section-compact .progress-section {
+    margin-bottom: var(--spacing-sm);
+}
+
+.status-section-compact .eta-section {
+    padding: var(--spacing-sm);
+}
+
+/* Compact package details */
+.package-details-compact {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.package-details-compact .package-detail-row {
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.package-details-compact .package-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.package-details-compact .package-detail-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.package-details-compact .package-detail-label {
+    font-size: 0.7rem;
+}
+
+.package-details-compact .package-detail-value {
+    font-size: 0.85rem;
+}
+
+/* Timeline in overlay */
+.timeline-in-overlay {
+    padding: var(--spacing-md);
+}
+
+.timeline-in-overlay .card-title {
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+}
+
+.timeline-in-overlay .timeline-minimalist {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+}
+
+.timeline-in-overlay .timeline-minimalist::-webkit-scrollbar {
+    width: 4px;
+}
+
+.timeline-in-overlay .timeline-minimalist::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 2px;
+}
+
+.timeline-in-overlay .timeline-minimalist::-webkit-scrollbar-thumb {
+    background: var(--brand-primary);
+    border-radius: 2px;
+}
+
+.timeline-in-overlay .timeline-item-minimal {
+    margin-bottom: var(--spacing-sm);
+}
+
+.timeline-in-overlay .timeline-icon-wrapper {
+    width: 32px;
+    height: 32px;
+}
+
+.timeline-in-overlay .timeline-icon-wrapper svg {
+    width: 16px;
+    height: 16px;
+}
+
+.timeline-in-overlay .timeline-time-minimal,
+.timeline-in-overlay .timeline-title-minimal,
+.timeline-in-overlay .timeline-location-minimal {
+    font-size: 0.8rem;
+}
+
+.timeline-in-overlay .timeline-title-minimal {
+    font-weight: 600;
+}
+
+/* ===================================
+   TRACKING PAGE 100VH OPTIMIZATION
+   =================================== */
+
+.tracking-content-100vh {
+    padding: var(--spacing-sm) 0;
+    height: calc(100vh - 70px);
+}
+
+/* Custom scrollbar for compact timeline */
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+/* ===================================
+   TRACKING PAGE - LIGHT MODE REDESIGN
+   =================================== */
+
+/* Tracking Page Layout */
+.tracking-page {
+    min-height: 100vh;
+    padding-bottom: 0;
+}
+
+/* ===================================
+   Map Section (Now Primary/Left)
+   =================================== */
+
+.map {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius-xl);
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* ===================================
+   Sidebar (Now Right Side)
+   =================================== */
+.tracking-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    order: 2;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+}
+
+/* Custom scrollbar for sidebar */
+.tracking-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tracking-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tracking-sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.tracking-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-primary);
+}
+
+/* ===================================
+   Status Card - Redesigned
+   =================================== */
+
+/* Progress Bar - Redesigned */
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--bg-secondary);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid var(--border-color);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: 999px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.eta-label {
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.eta-time {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===================================
+   Package Details - Redesigned
+   =================================== */
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+/* ===================================
+   Timeline - Redesigned
+   =================================== */
+
+.timeline {
+    position: relative;
+    padding-left: var(--spacing-lg);
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, 
+        var(--brand-primary) 0%, 
+        var(--brand-primary) 50%, 
+        var(--border-color) 50%, 
+        var(--border-color) 100%
+    );
+    border-radius: 999px;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===================================
+   Status-specific Styles
+   =================================== */
+
+/* ===================================
+   Responsive - Tracking Page
+   =================================== */
+@media (max-width: 1024px) {
     
-    .floating-cards {
-        flex-direction: column;
-        align-items: center;
+    .tracking-sidebar {
+        position: static;
+        order: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .tracking-sidebar {
+        gap: var(--spacing-md);
+    }
+}
+/* ===================================
+   CSS MAP VISUALIZATION
+   =================================== */
+
+/* ===================================
+   COMBINED STATUS & PACKAGE CARD
+   =================================== */
+
+.combined-status-card {
+    padding: var(--spacing-xl);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.combined-status-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.status-header-combined {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.status-icon-svg {
+    width: 60px;
+    height: 60px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    color: var(--brand-primary);
+    flex-shrink: 0;
+}
+
+.status-info-combined {
+    flex: 1;
+}
+
+.status-title-combined {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+}
+
+.tracking-code-badge {
+    display: inline-block;
+    color: var(--text-tertiary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--bg-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.progress-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.eta-section {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.package-detail-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    transition: all 0.3s ease;
+}
+
+.package-detail-row:hover {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+}
+
+.package-detail-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-primary);
+    flex-shrink: 0;
+}
+
+.package-detail-content {
+    flex: 1;
+}
+
+.package-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.package-detail-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ===================================
+   REDESIGNED TIMELINE WITH ICONS
+   =================================== */
+
+.timeline-minimalist {
+    position: relative;
+    padding-left: 0;
+}
+
+.timeline-item-minimal {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    animation: fadeInLeft 0.5s ease;
+    transition: all 0.3s ease;
+}
+
+.timeline-item-minimal:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item-minimal:hover {
+    transform: translateX(4px);
+}
+
+.timeline-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.timeline-item-minimal.completed .timeline-icon-wrapper {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    border-color: var(--brand-success);
+    color: var(--brand-success);
+}
+
+.timeline-item-minimal.active .timeline-icon-wrapper {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.timeline-icon-wrapper svg {
+    width: 20px;
+    height: 20px;
+}
+
+.timeline-content-minimal {
+    flex: 1;
+    padding-top: 0.25rem;
+}
+
+.timeline-time-minimal {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.timeline-title-minimal {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+}
+
+.timeline-location-minimal {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   FOOTER
+   =================================== */
+
+/* ===================================
+   CTA SECTION
+   =================================== */
+
+/* ===================================
+   TESTIMONIALS
+   =================================== */
+
+/* ===================================
+   RESPONSIVE ADJUSTMENTS
+   =================================== */
+/* ===================================
+   HERO ILLUSTRATION
+   =================================== */
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* ===================================
+   ULTRA COMPACT TRACKING CARD
+   =================================== */
+
+.status-section-compact {
+    padding: var(--spacing-sm) !important;
+}
+
+.status-section-compact .status-header-combined {
+    margin-bottom: 0.5rem !important;
+    gap: 0.5rem !important;
+}
+
+.status-section-compact .status-icon-svg {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0.5rem !important;
+}
+
+.status-section-compact .status-title-combined {
+    font-size: 1rem !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.status-section-compact .tracking-code-badge {
+    font-size: 0.7rem !important;
+    padding: 0.15rem 0.4rem !important;
+}
+
+.status-section-compact .progress-section {
+    margin-bottom: 0.5rem !important;
+}
+
+.status-section-compact .progress-bar {
+    height: 8px !important;
+}
+
+.status-section-compact .eta-section {
+    padding: 0.5rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.status-section-compact .eta-label {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.status-section-compact .eta-time {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+}
+
+/* Ultra compact package details */
+.package-details-compact {
+    padding: 0.5rem !important;
+}
+
+.package-details-compact .package-detail-row {
+    padding: 0.35rem !important;
+    margin-bottom: 0.25rem !important;
+    gap: 0.5rem !important;
+}
+
+.package-details-compact .package-detail-icon {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.package-details-compact .package-detail-label {
+    font-size: 0.65rem !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.package-details-compact .package-detail-value {
+    font-size: 0.8rem !important;
+}
+
+/* Ultra compact timeline */
+.timeline-in-overlay {
+    padding: 0.5rem !important;
+}
+
+.timeline-in-overlay .card-title {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.timeline-in-overlay .timeline-minimalist {
+    max-height: 180px !important;
+}
+
+.timeline-in-overlay .timeline-item-minimal {
+    margin-bottom: 0.5rem !important;
+    gap: 0.5rem !important;
+}
+
+.timeline-in-overlay .timeline-icon-wrapper {
+    width: 28px !important;
+    height: 28px !important;
+}
+
+.timeline-in-overlay .timeline-icon-wrapper svg {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.timeline-in-overlay .timeline-time-minimal {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.timeline-in-overlay .timeline-title-minimal {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.1rem !important;
+}
+
+.timeline-in-overlay .timeline-location-minimal {
+    font-size: 0.7rem !important;
+}
+
+/* ===================================
+   VISUAL MAP UI
+   =================================== */
+
+ .map {
+    height: 100% !important;
+    width: 100% !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Map grid pattern */
+
+/* Route path */
+
+/* Location markers */
+
+.marker-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 0.5rem;
+}
+
+/* Decorative elements */
+
+@keyframes markerPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes deliveryBounce {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+/* ===================================
+   POLISH & ENHANCEMENTS - LIGHT MODE
+   =================================== */
+
+/* Smooth page transitions */
+body {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Enhanced button ripple effects */
+button, .example-code, .track-button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::before, .example-code::before, .track-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:active::before, .example-code:active::before, .track-button:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Improved focus states for accessibility */
+input:focus,
+button:focus,
+a:focus {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+}
+
+/* Custom scrollbar for light mode */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 6px;
+    border: 2px solid var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-primary);
+}
+
+/* Selection color */
+::selection {
+    background: var(--brand-primary);
+    color: white;
+}
+
+/* Smooth transitions for all interactive elements */
+a, button, .modern-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced card hover effects */
+.modern-card:hover {
+    box-shadow: var(--shadow-xl);
+}
+
+/* Improved mobile touch targets */
+@media (max-width: 768px) {
+    button, .example-code, .nav-links a, .back-button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .mesh-background,
+    .navbar,
+    .features {
+        display: none;
     }
     
-    .features-grid {
-        grid-template-columns: 1fr;
+    body {
+        background: white;
+        color: black;
     }
+    
+    .modern-card {
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode support (optional future enhancement) */
+@media (prefers-color-scheme: dark) {
+    /* Keep light mode for now, but structure is ready for dark mode toggle */
+}
+
+/* Additional micro-interactions */
+.hero-badge {
+    transition: transform 0.3s ease;
+}
+
+.hero-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero-title-gradient {
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+}
+
+/* Loading animation enhancement */
+.loading-spinner {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Status badge animations */
+
+/* Timeline hover effects */
+
+/* Map overlay enhancements */
+
+/* Button loading state */
+.track-button.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.track-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* Accessibility improvements */
+
+/* Skip to content link */
+/* ===================================
+   RESPONSIVE & DYNAMIC ENHANCEMENTS
+   =================================== */
+
+/* Dynamic Hover Effects */
+.dynamic-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dynamic-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.dynamic-hover:active {
+  transform: translateY(0);
+}
+
+button.dynamic-hover:hover {
+  filter: brightness(1.1);
+}
+
+/* Pulse Animation for Live Map */
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse-dot 2s infinite;
+}
+
+/* Courier Dashboard Grid Layout */
+.courier-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Make map container fill vertically */
+.courier-map-container {
+  height: 75vh;
+  position: sticky;
+  top: 2rem;
+}
+
+.courier-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+  .courier-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .courier-map-container {
+    height: 50vh;
+    position: relative;
+    top: 0;
+    order: -1; /* Move map to top on mobile */
+    margin-bottom: 1rem;
+  }
+  
+  .courier-list-container {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+}
+
+/* Global Nav and Container Responsiveness */
+@media (max-width: 768px) {
+  .nav-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 1.1rem;
+  }
+  
+  .modern-card, .modern-card-elevated {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Tracking Page Responsiveness */
+@media (max-width: 992px) {
+  .tracking-grid-layout {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .tracking-sidebar {
+    height: 400px !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 2rem;
+    order: -1;
+  }
 }

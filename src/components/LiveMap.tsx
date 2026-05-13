@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { TrackingData } from '../data/mockData';
+import { TrackingData } from '../services/deliveryService';
 
 // Fix leaflet icon issue in React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -76,21 +76,17 @@ const LiveMap: React.FC<LiveMapProps> = ({ data, height = '100%', zoom = 4 }) =>
               opacity={0.6}
             />
 
-            {/* Origin Marker */}
-            <Marker position={item.origin.coordinates} icon={originIcon}>
-              <Popup><strong>Origin:</strong> {item.origin.city}</Popup>
-            </Marker>
-
             {/* Destination Marker */}
             <Marker position={item.destination.coordinates} icon={destinationIcon}>
               <Popup><strong>Destination:</strong> {item.destination.city}</Popup>
             </Marker>
 
-            {/* Current Location (Truck) Marker */}
+            {/* Current Location (Package/Truck) Marker - Combined with Origin Info */}
             <Marker position={item.currentLocation.coordinates} icon={truckIcon}>
               <Popup>
                 <strong>{item.trackingCode}</strong><br/>
-                Location: {item.currentLocation.city}<br/>
+                Origin: {item.origin.city}<br/>
+                Current Location: {item.currentLocation.city}<br/>
                 Status: {item.statusText}
               </Popup>
             </Marker>

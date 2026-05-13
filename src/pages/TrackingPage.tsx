@@ -1,31 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTrackingData, TrackingData, subscribeToUpdates } from '../data/mockData';
+import { deliveryService, TrackingData } from '../services/deliveryService';
 import LiveMap from '../components/LiveMap';
 
 const TrackingPage: React.FC = () => {
   const [data, setData] = useState<TrackingData | null>(null);
 
   useEffect(() => {
-    // In a real app, we'd fetch this from the backend
     const code = sessionStorage.getItem('currentTrackingCode') || 'TRACK001';
     
-    const loadData = () => {
-      setData(getTrackingData(code));
+    const fetchInitialData = async () => {
+      const dbData = await deliveryService.getDeliveryByCode(code);
+      if (dbData) {
+        setData(dbData);
+      }
     };
     
-    loadData();
-    const unsubscribe = subscribeToUpdates(loadData);
-    return () => unsubscribe();
+    fetchInitialData();
+
+    // Subscribe to real-time updates
+    const subscription = deliveryService.subscribeToDelivery(code, (payload) => {
+      // Refresh data when an update occurs
+      fetchInitialData();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (!data) return <div>Loading...</div>;
 
-  const iconPaths = {
+  const iconPaths: Record<string, string> = {
     'in-transit': '<rect x="1" y="3" width="15" height="13"></rect><path d="M16 8V2l6 6-6 6v-4"></path>',
     'out-for-delivery': '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
     'delivered': '<polyline points="20 6 9 17 4 12"></polyline>',
-    'delayed': '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>'
+    'delayed': '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>',
+    'failed': '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>'
   };
 
   const timelineIcons: Record<string, string> = {
@@ -70,10 +81,15 @@ const TrackingPage: React.FC = () => {
 
       <main className="tracking-content-100vh">
         <div className="container-fluid" style={{ height: '100%' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', height: '100%', paddingBottom: '1rem' }}>
+          <div className="tracking-grid-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '2rem', height: '100%', paddingBottom: '1rem' }}>
             
-            {/* Status Panel (Left) */}
-            <div style={{ flex: '0 0 380px', height: '100%', overflowY: 'auto', paddingRight: '0.5rem' }}>
+            {/* Live GPS Map (Left) */}
+            <div className="tracking-map-container modern-card-elevated" style={{ padding: 0, overflow: 'hidden', height: '100%', position: 'relative', zIndex: 1 }}>
+              <LiveMap data={data} zoom={11} />
+            </div>
+
+            {/* Status Panel (Right) */}
+            <div className="tracking-sidebar" style={{ height: '100%', overflowY: 'auto', paddingLeft: '0.5rem' }}>
               <div className={`combined-status-card modern-card status-${data.status}`} style={{ margin: 0, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                 
                 {/* Status Header */}
@@ -164,11 +180,6 @@ const TrackingPage: React.FC = () => {
                 </div>
 
               </div>
-            </div>
-
-            {/* Live GPS Map (Right) */}
-            <div className="modern-card-elevated" style={{ flex: 1, padding: 0, overflow: 'hidden', height: '100%', minWidth: '300px', position: 'relative', zIndex: 1 }}>
-              <LiveMap data={data} />
             </div>
 
           </div>
