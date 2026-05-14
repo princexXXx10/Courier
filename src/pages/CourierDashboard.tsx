@@ -88,7 +88,8 @@ const CourierDashboard: React.FC = () => {
   };
 
   const handleStartRoute = async (delivery: TrackingData) => {
-    await handleUpdateStatus(delivery.trackingCode, 'out-for-delivery', 'Out for Delivery', delivery.origin.city);
+    await handleUpdateStatus(delivery.trackingCode, 'out-for-delivery', 'Out for Delivery',
+      delivery.origin.city);
     setActiveTrackingCode(delivery.trackingCode);
     setFocusedDeliveryCode(delivery.trackingCode);
   };

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 import { deliveryService, TrackingData } from '../services/deliveryService';
 import LiveMap from '../components/LiveMap';
 
 const AdminDashboard: React.FC = () => {
   const [deliveries, setDeliveries] = useState<TrackingData[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -24,6 +26,11 @@ const AdminDashboard: React.FC = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   const totalDeliveries = deliveries.length;
   const inTransit = deliveries.filter(d => d.status === 'in-transit').length;
@@ -45,7 +52,10 @@ const AdminDashboard: React.FC = () => {
               </svg>
               <span>Admin Portal</span>
             </div>
-            <Link to="/" className="back-button">Back to Tracking</Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Link to="/" className="back-button">Back to Tracking</Link>
+              <button onClick={handleLogout} className="back-button" style={{ border: 'none', background: 'none', cursor: 'pointer' }}>Log Out</button>
+            </div>
           </div>
         </div>
       </nav>

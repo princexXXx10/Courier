@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { deliveryService } from '../services/deliveryService';
 
 const LandingPage: React.FC = () => {
@@ -63,9 +63,8 @@ const LandingPage: React.FC = () => {
                 <span>CourierTrack</span>
               </div>
               <div className="nav-links">
-                <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
-                <a href="#contact">Contact</a>
+                <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Courier Login</Link>
+                <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Admin Login</Link>
               </div>
             </div>
           </div>
@@ -111,7 +110,28 @@ const LandingPage: React.FC = () => {
                     </svg>
                   </button>
                 </form>
-                {error && <div className="error-message" style={{ display: 'block', animation: 'fadeIn 0.3s ease' }}>{error}</div>}
+                {error && (
+                  <div style={{ 
+                    display: 'block', 
+                    animation: 'fadeIn 0.3s ease', 
+                    color: '#ef4444', 
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)', 
+                    padding: '0.75rem 1rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid rgba(239, 68, 68, 0.3)', 
+                    marginTop: '1rem',
+                    textAlign: 'left',
+                    fontSize: '0.95rem',
+                    fontWeight: '500'
+                  }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'text-bottom', marginRight: '0.5rem' }}>
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {error}
+                  </div>
+                )}
               </div>
 
               {/* Example Codes */}
