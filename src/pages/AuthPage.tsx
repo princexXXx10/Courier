@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { deliveryService } from '../services/deliveryService';
 
 const AuthPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // If user is already logged in, redirect them accordingly
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabase.from('profiles').select('role').eq('id', session.user.id).single().then(({ data }) => {
+          if (data?.role === 'admin') navigate('/admin');
+          else if (data?.role === 'courier') navigate('/courier');
+          else navigate('/tracking');
+        });
+      }
+    });
+  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,19 +31,54 @@ const AuthPage: React.FC = () => {
     setError('');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      
-      // Fetch role
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
+      if (isSignUp) {
+        // Sign Up
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            }
+          }
+        });
+        if (error) throw error;
 
-      if (profile?.role === 'admin') navigate('/admin');
-      else if (profile?.role === 'courier') navigate('/courier');
-      else navigate('/');
+        // Auto claim pending tracking code if it exists
+        const pendingCode = sessionStorage.getItem('pendingTrackingCode');
+        if (pendingCode && data.user) {
+          await deliveryService.claimDelivery(pendingCode, data.user.id);
+          sessionStorage.removeItem('pendingTrackingCode');
+          sessionStorage.setItem('currentTrackingCode', pendingCode);
+        }
+
+        navigate('/tracking');
+      } else {
+        // Sign In
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        
+        // Fetch role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        // Auto claim pending tracking code if it exists
+        const pendingCode = sessionStorage.getItem('pendingTrackingCode');
+        if (pendingCode && data.user) {
+          await deliveryService.claimDelivery(pendingCode, data.user.id);
+          sessionStorage.removeItem('pendingTrackingCode');
+          sessionStorage.setItem('currentTrackingCode', pendingCode);
+          navigate('/tracking');
+          return;
+        }
+
+        if (profile?.role === 'admin') navigate('/admin');
+        else if (profile?.role === 'courier') navigate('/courier');
+        else navigate('/tracking');
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred during authentication');
     } finally {
@@ -81,9 +132,11 @@ const AuthPage: React.FC = () => {
               </linearGradient>
             </defs>
           </svg>
-          <h1 style={{ fontSize: '1.75rem', color: 'var(--text-primary)' }}>Staff Portal</h1>
+          <h1 style={{ fontSize: '1.75rem', color: 'var(--text-primary)' }}>
+            {isSignUp ? 'Create Account' : 'Portal Login'}
+          </h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-            Sign in to access your dashboard
+            {isSignUp ? 'Sign up to track and manage your deliveries' : 'Sign in to access your dashboard'}
           </p>
         </div>
 
@@ -111,6 +164,20 @@ const AuthPage: React.FC = () => {
         )}
 
         <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {isSignUp && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Full Name</label>
+              <input 
+                type="text" 
+                className="tracking-input" 
+                style={{ width: '100%', padding: '0.75rem 1rem' }}
+                placeholder="John Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Email Address</label>
             <input 
@@ -137,8 +204,29 @@ const AuthPage: React.FC = () => {
           </div>
 
           <button type="submit" className="track-button" style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }} disabled={loading}>
-            {loading ? 'Processing...' : 'Sign In'}
+            {loading ? 'Processing...' : (isSignUp ? 'Create Account' : 'Sign In')}
           </button>
+
+          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+            <button 
+              type="button" 
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setError('');
+              }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: 'var(--brand-primary)', 
+                cursor: 'pointer', 
+                fontSize: '0.9rem', 
+                fontWeight: '500',
+                textDecoration: 'underline' 
+              }}
+            >
+              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

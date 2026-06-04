@@ -49,7 +49,14 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/tracking" element={<TrackingPage />} />
+        <Route 
+          path="/tracking" 
+          element={
+            <ProtectedRoute allowedRoles={['customer', 'admin', 'courier']}>
+              <TrackingPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route 
           path="/admin" 
           element={

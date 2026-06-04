@@ -1,35 +1,124 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 import { deliveryService, TrackingData } from '../services/deliveryService';
 import LiveMap from '../components/LiveMap';
 
 const TrackingPage: React.FC = () => {
-  const [data, setData] = useState<TrackingData | null>(null);
+  const [deliveries, setDeliveries] = useState<TrackingData[]>([]);
+  const [selectedDelivery, setSelectedDelivery] = useState<TrackingData | null>(null);
+  const [newTrackingCode, setNewTrackingCode] = useState('');
+  const [claimError, setClaimError] = useState('');
+  const [claimSuccess, setClaimSuccess] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
+
+  const loadData = async (activeCode?: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/auth');
+      return;
+    }
+    setUserEmail(session.user.email || '');
+
+    const userDeliveries = await deliveryService.getDeliveriesByCustomerId(session.user.id);
+    setDeliveries(userDeliveries);
+
+    // Determine which code to select
+    const targetCode = activeCode || sessionStorage.getItem('currentTrackingCode') || (userDeliveries.length > 0 ? userDeliveries[0].trackingCode : null);
+
+    if (targetCode) {
+      // Find in local list
+      const matched = userDeliveries.find(d => d.trackingCode === targetCode);
+      if (matched) {
+        setSelectedDelivery(matched);
+        sessionStorage.setItem('currentTrackingCode', targetCode);
+      } else {
+        // Fetch individually if not in user's list yet
+        const dbData = await deliveryService.getDeliveryByCode(targetCode);
+        if (dbData) {
+          setSelectedDelivery(dbData);
+          sessionStorage.setItem('currentTrackingCode', targetCode);
+        }
+      }
+    } else {
+      setSelectedDelivery(null);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const code = sessionStorage.getItem('currentTrackingCode') || 'TRACK001';
-    
-    const fetchInitialData = async () => {
-      const dbData = await deliveryService.getDeliveryByCode(code);
-      if (dbData) {
-        setData(dbData);
-      }
-    };
-    
-    fetchInitialData();
+    loadData();
 
-    // Subscribe to real-time updates
-    const subscription = deliveryService.subscribeToDelivery(code, (payload) => {
-      // Refresh data when an update occurs
-      fetchInitialData();
-    });
+    // Subscribe to updates for the currently selected tracking code if any
+    const code = sessionStorage.getItem('currentTrackingCode');
+    let subscription: any;
+    if (code) {
+      subscription = deliveryService.subscribeToDelivery(code, () => {
+        loadData(code);
+      });
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) subscription.unsubscribe();
     };
   }, []);
 
-  if (!data) return <div>Loading...</div>;
+  const handleClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setClaimError('');
+    setClaimSuccess('');
+
+    if (!newTrackingCode.trim()) {
+      setClaimError('Please enter a tracking code');
+      return;
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const formattedCode = newTrackingCode.trim().toUpperCase();
+
+    // Check if the delivery is already claimed by someone else
+    const delivery = await deliveryService.getDeliveryByCode(formattedCode);
+    if (!delivery) {
+      setClaimError('Tracking code not found in system.');
+      return;
+    }
+
+    if (delivery.customerId && delivery.customerId !== session.user.id) {
+      setClaimError('This shipment is already registered to another account.');
+      return;
+    }
+
+    const success = await deliveryService.claimDelivery(formattedCode, session.user.id);
+    if (success) {
+      setClaimSuccess(`Successfully added package ${formattedCode}!`);
+      setNewTrackingCode('');
+      loadData(formattedCode);
+    } else {
+      setClaimError('Failed to associate package. Please try again.');
+    }
+  };
+
+  const handleSelect = (delivery: TrackingData) => {
+    setSelectedDelivery(delivery);
+    sessionStorage.setItem('currentTrackingCode', delivery.trackingCode);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)' }}>
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
 
   const iconPaths: Record<string, string> = {
     'in-transit': '<rect x="1" y="3" width="15" height="13"></rect><path d="M16 8V2l6 6-6 6v-4"></path>',
@@ -55,7 +144,7 @@ const TrackingPage: React.FC = () => {
       <nav className="navbar">
         <div className="container">
           <div className="nav-content">
-            <div className="logo">
+            <div className="logo" style={{ display: 'flex', alignItems: 'center' }}>
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
                 <path d="M16 2L3 9L16 16L29 9L16 2Z" fill="url(#logo-gradient)" stroke="#6366F1" strokeWidth="2" />
                 <path d="M3 23L16 30L29 23" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" />
@@ -67,118 +156,130 @@ const TrackingPage: React.FC = () => {
                   </linearGradient>
                 </defs>
               </svg>
-              <span>CourierTrack</span>
+              <span style={{ fontWeight: '700', fontSize: '1.25rem', color: 'var(--text-primary)', marginLeft: '0.75rem' }}>CourierTrack</span>
             </div>
-            <Link to="/" className="back-button">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
-                <path d="M13 3L7 10L13 17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span>Back to Home</span>
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                Account: {userEmail}
+              </span>
+              <Link to="/" className="back-button" style={{ textDecoration: 'none' }}>Home</Link>
+              <button
+                onClick={handleLogout}
+                className="back-button"
+                style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+              >
+                Log Out
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       <main className="tracking-content-100vh">
         <div className="container-fluid" style={{ height: '100%' }}>
-          <div className="tracking-grid-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '2rem', height: '100%', paddingBottom: '1rem' }}>
-            
+          <div className="tracking-grid-layout" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '2rem', height: '100%', minHeight: 0, paddingBottom: '1rem' }}>
+
             {/* Live GPS Map (Left) */}
             <div className="tracking-map-container modern-card-elevated" style={{ padding: 0, overflow: 'hidden', height: '100%', position: 'relative', zIndex: 1 }}>
-              <LiveMap data={data} zoom={11} />
+              {selectedDelivery ? (
+                <LiveMap data={selectedDelivery} zoom={11} />
+              ) : (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', color: 'var(--text-secondary)', padding: '2rem', textAlign: 'center' }}>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1.5rem', color: 'var(--brand-primary)' }}>
+                    <circle cx="12" cy="10" r="3"></circle>
+                    <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"></path>
+                  </svg>
+                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '1.25rem' }}>No Shipment Selected</h3>
+                  <p style={{ maxWidth: '350px', fontSize: '0.9rem' }}>Add a shipment using the form on the right or select an active shipment to view its live GPS location.</p>
+                </div>
+              )}
             </div>
 
-            {/* Status Panel (Right) */}
-            <div className="tracking-sidebar" style={{ height: '100%', overflowY: 'auto', paddingLeft: '0.5rem' }}>
-              <div className={`combined-status-card modern-card status-${data.status}`} style={{ margin: 0, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-                
-                {/* Status Header */}
-                <div className="status-section-compact">
-                  <div className="status-header-combined">
-                    <svg className="status-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" dangerouslySetInnerHTML={{ __html: iconPaths[data.status] }} />
-                    <div className="status-info-combined">
-                      <h2 className="status-title-combined">{data.statusText}</h2>
-                      <span className="tracking-code-badge">{data.trackingCode}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="progress-section">
-                    <div className="progress-bar">
-                      <div className="progress-fill" style={{ width: `${data.progress}%` }}></div>
-                    </div>
-                  </div>
-                  
-                  <div className="eta-section">
-                    <div className="eta-label">Estimated Delivery</div>
-                    <div className="eta-time">{data.eta}</div>
-                  </div>
-                </div>
+            {/* Panel (Right) */}
+            <div className="tracking-sidebar" style={{ height: '100%', minHeight: 0, overflowY: 'auto', paddingLeft: '0.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '1rem' }}>
 
-                {/* Package Details */}
-                <div className="package-details-compact">
-                  <div className="package-detail-row">
-                    <svg className="package-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="10" r="3"></circle>
-                      <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"></path>
-                    </svg>
-                    <div className="package-detail-content">
-                      <div className="package-detail-label">Origin</div>
-                      <div className="package-detail-value">{data.origin.city}</div>
-                    </div>
+              {/* Claim New Package Card */}
+              <div className="modern-card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Link New Shipment
+                </h3>
+                <form onSubmit={handleClaim} style={{ display: 'flex', gap: '0.75rem' }}>
+                  <input
+                    type="text"
+                    className="tracking-input"
+                    placeholder="Enter tracking code (e.g. TRACK001)"
+                    value={newTrackingCode}
+                    onChange={(e) => setNewTrackingCode(e.target.value)}
+                    style={{ flex: 1, padding: '0.6rem 1rem' }}
+                  />
+                  <button type="submit" className="track-button dynamic-hover" style={{ padding: '0.6rem 1.25rem', whiteSpace: 'nowrap' }}>
+                    Add Package
+                  </button>
+                </form>
+                {claimError && (
+                  <div style={{ color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem', marginTop: '0.75rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                    {claimError}
                   </div>
-                  <div className="package-detail-row">
-                    <svg className="package-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <div className="package-detail-content">
-                      <div className="package-detail-label">Destination</div>
-                      <div className="package-detail-value">{data.destination.city}</div>
-                    </div>
+                )}
+                {claimSuccess && (
+                  <div style={{ color: 'var(--brand-success)', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem', marginTop: '0.75rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                    {claimSuccess}
                   </div>
-                  <div className="package-detail-row">
-                    <svg className="package-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 7h-9"></path>
-                      <path d="M14 17H5"></path>
-                      <circle cx="17" cy="17" r="3"></circle>
-                      <circle cx="7" cy="7" r="3"></circle>
-                    </svg>
-                    <div className="package-detail-content">
-                      <div className="package-detail-label">Weight</div>
-                      <div className="package-detail-value">{data.packageDetails.weight}</div>
-                    </div>
-                  </div>
-                  <div className="package-detail-row">
-                    <svg className="package-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="1" y="3" width="15" height="13"></rect>
-                      <path d="M16 8V2l6 6-6 6v-4"></path>
-                    </svg>
-                    <div className="package-detail-content">
-                      <div className="package-detail-label">Courier</div>
-                      <div className="package-detail-value">{data.packageDetails.courier}</div>
-                    </div>
-                  </div>
-                </div>
+                )}
+              </div>
 
-                {/* Timeline */}
-                <div className="timeline-in-overlay" style={{ flex: 1, paddingBottom: '1rem' }}>
-                  <h3 className="card-title">Tracking Timeline</h3>
-                  <div className="timeline-minimalist" style={{ maxHeight: '100%' }}>
-                    {data.timeline.map((item, index) => (
-                      <div key={index} className={`timeline-item-minimal ${item.status}`} style={{ animationDelay: `${index * 0.1}s` }}>
-                        <div className="timeline-icon-wrapper">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: timelineIcons[item.title] || timelineIcons['In Transit'] }} />
+              {/* Customer's Shipments Switcher */}
+              <div className="modern-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>My Registered Shipments</h3>
+                {deliveries.length === 0 ? (
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textAlign: 'center', padding: '1rem 0' }}>
+                    You have no registered shipments.
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto' }}>
+                    {deliveries.map(delivery => {
+                      const isSelected = selectedDelivery?.trackingCode === delivery.trackingCode;
+                      return (
+                        <div
+                          key={delivery.trackingCode}
+                          onClick={() => handleSelect(delivery)}
+                          className="dynamic-hover"
+                          style={{
+                            padding: '0.75rem 1rem',
+                            borderRadius: '8px',
+                            border: isSelected ? '1px solid var(--brand-primary)' : '1px solid var(--border-color)',
+                            background: isSelected ? 'var(--bg-tertiary)' : 'var(--bg-primary)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: '600', fontSize: '0.95rem', color: 'var(--text-primary)' }}>{delivery.trackingCode}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
+                              {delivery.origin.city} → {delivery.destination.city}
+                            </div>
+                          </div>
+                          <span style={{
+                            padding: '0.2rem 0.6rem',
+                            borderRadius: '999px',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            backgroundColor: delivery.status === 'delivered' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(99, 102, 241, 0.1)',
+                            color: delivery.status === 'delivered' ? 'var(--brand-success)' : 'var(--brand-primary)'
+                          }}>
+                            {delivery.statusText}
+                          </span>
                         </div>
-                        <div className="timeline-content-minimal">
-                          <div className="timeline-time-minimal">{item.time}</div>
-                          <div className="timeline-title-minimal">{item.title}</div>
-                          <div className="timeline-location-minimal">{item.location}</div>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
-                </div>
-
+                )}
               </div>
             </div>
 

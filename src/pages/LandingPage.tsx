@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 import { deliveryService } from '../services/deliveryService';
 
 const LandingPage: React.FC = () => {
   const [trackingCode, setTrackingCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsLoggedIn(true);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        if (profile) setUserRole(profile.role);
+      }
+    };
+    checkUser();
+  }, []);
 
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!trackingCode.trim()) {
       setError('Please enter a tracking code');
       return;
@@ -22,15 +41,24 @@ const LandingPage: React.FC = () => {
     (async () => {
       const codeToTrack = trackingCode.toUpperCase();
       const delivery = await deliveryService.getDeliveryByCode(codeToTrack);
-      
+
       if (!delivery) {
         setError('Tracking code not found in system.');
         setIsLoading(false);
         return;
       }
-      
-      sessionStorage.setItem('currentTrackingCode', codeToTrack);
-      navigate('/tracking');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // Redirect to login/signup and queue the tracking code
+        sessionStorage.setItem('pendingTrackingCode', codeToTrack);
+        navigate('/auth');
+      } else {
+        // Claim the delivery first, then view it
+        await deliveryService.claimDelivery(codeToTrack, session.user.id);
+        sessionStorage.setItem('currentTrackingCode', codeToTrack);
+        navigate('/tracking');
+      }
     })();
   };
 
@@ -62,9 +90,36 @@ const LandingPage: React.FC = () => {
                 </svg>
                 <span>CourierTrack</span>
               </div>
-              <div className="nav-links">
-                <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Courier Login</Link>
-                <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Admin Login</Link>
+              <div className="nav-links" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                {isLoggedIn ? (
+                  <>
+                    {userRole === 'admin' && (
+                      <Link to="/admin" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Admin Dashboard</Link>
+                    )}
+                    {userRole === 'courier' && (
+                      <Link to="/courier" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Courier Dashboard</Link>
+                    )}
+                    {userRole === 'customer' && (
+                      <Link to="/tracking" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>My Shipments</Link>
+                    )}
+                    <button
+                      onClick={async () => {
+                        await supabase.auth.signOut();
+                        setIsLoggedIn(false);
+                        setUserRole(null);
+                        navigate('/');
+                      }}
+                      className="back-button"
+                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0 }}
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Sign In / Sign Up</Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -78,7 +133,7 @@ const LandingPage: React.FC = () => {
                 <span className="hero-badge-dot"></span>
                 <span>Real-time Package Tracking</span>
               </div>
-              
+
               <h1 className="hero-title">
                 Track Your Packages
                 <span className="hero-title-gradient">Anywhere, Anytime</span>
@@ -94,10 +149,10 @@ const LandingPage: React.FC = () => {
                     <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16z" strokeWidth="2" />
                     <path d="M19 19l-4.35-4.35" strokeWidth="2" strokeLinecap="round" />
                   </svg>
-                  <input 
-                    type="text" 
-                    id="trackingCode" 
-                    className="tracking-input" 
+                  <input
+                    type="text"
+                    id="trackingCode"
+                    className="tracking-input"
                     placeholder="Enter tracking code (e.g., TRACK001)"
                     autoComplete="off"
                     value={trackingCode}
@@ -111,14 +166,14 @@ const LandingPage: React.FC = () => {
                   </button>
                 </form>
                 {error && (
-                  <div style={{ 
-                    display: 'block', 
-                    animation: 'fadeIn 0.3s ease', 
-                    color: '#ef4444', 
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)', 
-                    padding: '0.75rem 1rem', 
-                    borderRadius: '8px', 
-                    border: '1px solid rgba(239, 68, 68, 0.3)', 
+                  <div style={{
+                    display: 'block',
+                    animation: 'fadeIn 0.3s ease',
+                    color: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
                     marginTop: '1rem',
                     textAlign: 'left',
                     fontSize: '0.95rem',
@@ -132,14 +187,6 @@ const LandingPage: React.FC = () => {
                     {error}
                   </div>
                 )}
-              </div>
-
-              {/* Example Codes */}
-              <div className="example-codes">
-                <span className="example-label">Try example:</span>
-                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK001')}>TRACK001</button>
-                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK002')}>TRACK002</button>
-                <button className="example-code dynamic-hover" onClick={() => handleExampleClick('TRACK003')}>TRACK003</button>
               </div>
             </div>
 

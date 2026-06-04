@@ -46,6 +46,7 @@ export interface TrackingData {
   }[];
   assignedCourier?: string;
   customerName?: string;
+  customerId?: string;
 }
 
 const mapToTrackingData = (dbData: any): TrackingData => {
@@ -86,7 +87,8 @@ const mapToTrackingData = (dbData: any): TrackingData => {
       status: t.status
     })),
     assignedCourier: dbData.assigned_courier || '',
-    customerName: dbData.customer_name || ''
+    customerName: dbData.customer_name || '',
+    customerId: dbData.customer_id || ''
   };
 };
 
@@ -118,6 +120,42 @@ export const deliveryService = {
     }
 
     return data.map(mapToTrackingData);
+  },
+
+  async getDeliveriesByCustomerId(customerId: string): Promise<TrackingData[]> {
+    const { data, error } = await supabase
+      .from('deliveries')
+      .select('*, timeline:timeline_events(*)')
+      .eq('customer_id', customerId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching customer deliveries:', error);
+      return [];
+    }
+
+    return data.map(mapToTrackingData);
+  },
+
+  async claimDelivery(trackingCode: string, customerId: string): Promise<boolean> {
+    const { data: delivery } = await supabase
+      .from('deliveries')
+      .select('id')
+      .eq('tracking_code', trackingCode)
+      .single();
+
+    if (!delivery) return false;
+
+    const { error } = await supabase
+      .from('deliveries')
+      .update({ customer_id: customerId })
+      .eq('tracking_code', trackingCode);
+
+    if (error) {
+      console.error('Error claiming delivery:', error);
+      return false;
+    }
+    return true;
   },
 
   async updateLocation(code: string, lat: number, lng: number) {

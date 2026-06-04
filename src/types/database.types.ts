@@ -18,6 +18,7 @@ export type Database = {
           current_lat: number
           current_lng: number
           current_status: string | null
+          customer_id: string | null
           customer_name: string | null
           destination_city: string
           destination_code: string | null
@@ -47,6 +48,7 @@ export type Database = {
           current_lat: number
           current_lng: number
           current_status?: string | null
+          customer_id?: string | null
           customer_name?: string | null
           destination_city: string
           destination_code?: string | null
@@ -76,6 +78,7 @@ export type Database = {
           current_lat?: number
           current_lng?: number
           current_status?: string | null
+          customer_id?: string | null
           customer_name?: string | null
           destination_city?: string
           destination_code?: string | null
@@ -139,6 +142,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          id: string
+          role: string
+          full_name: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id: string
+          role?: string
+          full_name?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          role?: string
+          full_name?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

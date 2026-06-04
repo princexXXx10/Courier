@@ -20,11 +20,13 @@ const truckIcon = new L.Icon({
   popupAnchor: [0, -19]
 });
 
+/*
 const originIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063822.png',
   iconSize: [30, 30],
   iconAnchor: [15, 30]
 });
+*/
 
 const destinationIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/14090/14090382.png',

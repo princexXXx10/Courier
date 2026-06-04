@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { deliveryService, TrackingData } from '../services/deliveryService';
 import { supabase } from '../lib/supabaseClient';
 import LiveMap from '../components/LiveMap';
